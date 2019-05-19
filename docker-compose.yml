@@ -1,3 +1,6 @@
+#  mkdir sonar
+#  chmod -R 777 sonar
+#
 version: "3.3"
 services:
    db:
@@ -5,21 +8,15 @@ services:
      container_name: sonarqube-postgres
      volumes:
        - $PWD/sonar/postgres:/var/lib/postgresql/data
-     ports:
-        - "5432:5432" 
+#     ports:
+#        - "5432:5432" 
      environment:
        - POSTGRES_USER=sonar 
        - POSTGRES_PASSWORD=sonar
        - TZ=Asia/Taipei
-   adminer:
-     image: adminer
-     restart: always
-     ports:
-          - 8088:8080
   
    sonarqube:
-     image: jamesz2011/sonarqube6.7:latest
-#     image: sonarqube:6.7-community
+     image: sonarqube:7.7-community
      container_name: sonarqube
      ports:
          - "9000:9000"
@@ -28,7 +25,7 @@ services:
         - /etc/localtime:/etc/localtime:ro
 #        - $PWD/sonar/conf:/opt/sonarqube/conf
         - $PWD/sonar/data:/opt/sonarqube/data:Z
-#        - $PWD/sonar/logs:/opt/sonarqube/logs:Z
+        - $PWD/sonar/logs:/opt/sonarqube/logs:Z
         - $PWD/sonar/extensions:/opt/sonarqube/extensions:Z
         - $PWD/sonar.properties:/opt/sonarqube/conf/sonar.properties
      links:
