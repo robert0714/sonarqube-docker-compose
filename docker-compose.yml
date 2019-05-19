@@ -1,8 +1,10 @@
 version: "3.3"
 services:
    db:
-     image: postgres
+     image: postgres:11.3
      container_name: sonarqube-postgres
+     volumes:
+       - $PWD/sonar/postgres:/var/lib/postgresql/data
      ports:
         - "5432:5432" 
      environment:
@@ -16,17 +18,24 @@ services:
           - 8088:8080
   
    sonarqube:
-     image: jamesz2011/sonarqube6.7:latest
+ #    image: jamesz2011/sonarqube6.7:latest
+     image: sonarqube:6.7-community
      container_name: sonarqube
      ports:
          - "9000:9000"
          - "9092:9092"
      volumes:
         - /etc/localtime:/etc/localtime:ro
+#        - $PWD/sonar/conf:/opt/sonarqube/conf
+        - $PWD/sonar/data:/opt/sonarqube/data:Z
+#        - $PWD/sonar/logs:/opt/sonarqube/logs:Z
+        - $PWD/sonar/extensions:/opt/sonarqube/extensions:Z
+        - $PWD/sonar.properties:/opt/sonarqube/conf/sonar.properties
      links:
         - db
      environment:
         - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
         - TZ=Asia/Taipei
+        - sonar.web.context=/sonar
      depends_on:
       - db
