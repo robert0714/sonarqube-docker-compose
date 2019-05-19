@@ -1,4 +1,8 @@
-#  mkdir sonar
+#  mkdir -p sonar/sonar/conf
+#  mkdir -p sonar/sonar/data
+#  mkdir -p sonar/sonar/logs
+#  mkdir -p sonar/sonar/extensions
+#  mkdir -p sonar/sonar/postgres
 #  chmod -R 777 sonar
 #
 version: "3.3"
@@ -33,6 +37,5 @@ services:
      environment:
         - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
         - TZ=Asia/Taipei
-        - sonar.web.context=/sonar
      depends_on:
       - db
