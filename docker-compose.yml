@@ -10,6 +10,7 @@ services:
    db:
      image: postgres:11.3
      container_name: sonarqube-postgres
+     restart: always
      volumes:
        - $PWD/sonar/postgres:/var/lib/postgresql/data
 #     ports:
@@ -22,6 +23,7 @@ services:
    sonarqube:
      image: sonarqube:8.5.0-community
      container_name: sonarqube
+     restart: always
      ports:
          - "9000:9000"
          - "9092:9092"
