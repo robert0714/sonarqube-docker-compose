@@ -43,3 +43,60 @@ https://github.com/SonarSource/eslint-plugin-sonarjs
 ```
 docker run --rm  -p 9000:9000 -v sonarqube_extensions:/opt/sonarqube/extensions   sonarqube:8.4.1-community
 ```
+## Running SonarScanner from the Docker image
+To scan using the SonarScanner Docker image, use the following command:
+```bash
+docker run \
+    --rm \
+    -e SONAR_HOST_URL="http://${SONARQUBE_URL}" \
+    -e SONAR_LOGIN="myAuthenticationToken" \
+    -v "${YOUR_REPO}:/usr/src" \
+    sonarsource/sonar-scanner-cli
+```
+
+## Running SonarScanner from Maven
+Edit the settings.xml file, located in $MAVEN_HOME/conf or ~/.m2, to set the plugin prefix and optionally the SonarQube server URL.
+
+Example:
+```xml
+<settings>
+    <pluginGroups>
+        <pluginGroup>org.sonarsource.scanner.maven</pluginGroup>
+    </pluginGroups>
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <!-- Optional URL to server. Default value is http://localhost:9000 -->
+                <sonar.host.url>
+                  http://10.100.98.200:9000/sonar/
+                </sonar.host.url>
+            </properties>
+        </profile>
+     </profiles>
+</settings>
+```
+#### Analyzing
+
+Analyzing a Maven project consists of running a Maven goal: sonar:sonar from the directory that holds the main project pom.xml. You need to pass an authentication token using the sonar.login property in your command line.
+
+```bash
+mvn clean verify sonar:sonar -Dsonar.login=myAuthenticationToken
+```
+
+In some situations you may want to run the sonar:sonar goal as a dedicated step. Be sure to use install as first step for multi-module projects
+
+```bash
+mvn clean install
+mvn sonar:sonar -Dsonar.login=myAuthenticationToken
+```
+To specify the version of sonar-maven-plugin instead of using the latest:
+
+```bash
+mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar
+```
+
+To get coverage information, you'll need to generate the coverage report before the analysis.
