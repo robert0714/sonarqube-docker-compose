@@ -1,5 +1,4 @@
 sonar
-sonar.properties
 .vagrant/*
 *.log
 .vagrant
