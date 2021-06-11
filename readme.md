@@ -100,3 +100,19 @@ mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar
 ```
 
 To get coverage information, you'll need to generate the coverage report before the analysis.
+
+
+### Ldap Configuration
+Add the parameters as the below.
+```sonar.properties
+ldap.authentication=simple
+ldap.url=ldap://192.168.2.12:389
+ldap.bindDn=
+ldap.bindPassword=
+ldap.user.baseDn=DC=iead,DC=local
+ldap.user.request=(&(objectClass=person)(sAMAccountName={login}))
+ldap.user.realNameAttribute=name
+ldap.user.emailAttribute=mail
+ldap.group.baseDn=DC=iead,DC=local
+ldap.group.request=(&(objectClass=group)(member={dn}))
+```
