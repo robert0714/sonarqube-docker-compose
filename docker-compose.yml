@@ -8,27 +8,38 @@
 version: "3.3"
 services:
    db:
-     image: postgres:11.3
+     image: postgres:13
      container_name: sonarqube-postgres
      restart: always
-#     volumes:
-#       - $PWD/sonar/postgres:/var/lib/postgresql/data
+     volumes:
+       - $PWD/sonar/postgres_data:/var/lib/postgresql/data
+       - $PWD/sonar/postgres:/var/lib/postgresql
      network_mode: host
 #     ports:
 #        - "5432:5432" 
      environment:
+       - POSTGRES_DB=sonar       
        - POSTGRES_USER=sonar 
        - POSTGRES_PASSWORD=sonar
        - TZ=Asia/Taipei
-  
+   init:
+     image: bash
+     privileged: true
+     network_mode: host
+     user: root
+     volumes:
+       - $PWD/init.sh:/mnt/init.sh 
+     command: ["sh", "-e", "/mnt/init.sh"]
+
    sonarqube:
-     image: sonarqube:8.4.1-community
+     image: sonarqube:community
      container_name: sonarqube
      restart: always
      ulimits:
+       nproc:  "131072"
        nofile:
-         soft: "65536"
-         hard: "65536"
+         soft: "8192"
+         hard: "131072"
        memlock:
          soft: -1
          hard: -1
@@ -40,10 +51,13 @@ services:
      volumes:
         - /etc/localtime:/etc/localtime:ro
         - $PWD/sonar/conf:/opt/sonarqube/conf
-        - $PWD/sonar/data:/opt/sonarqube/data:Z
-        - $PWD/sonar/logs:/opt/sonarqube/logs:Z
-        - $PWD/sonar/extensions:/opt/sonarqube/extensions:Z
+#        - $PWD/sonar/data:/opt/sonarqube/data:Z
+#        - $PWD/sonar/logs:/opt/sonarqube/logs:Z
+#        - $PWD/sonar/extensions:/opt/sonarqube/extensions:Z
         - $PWD/sonar.properties:/opt/sonarqube/conf/sonar.properties
+        - sonarqube_data:/opt/sonarqube/data
+        - sonarqube_extensions:/opt/sonarqube/extensions
+        - sonarqube_logs:/opt/sonarqube/logs  
 #     links:
 #        - db
      environment:
@@ -54,3 +68,9 @@ services:
         - TZ=Asia/Taipei
      depends_on:
       - db
+      - init
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
